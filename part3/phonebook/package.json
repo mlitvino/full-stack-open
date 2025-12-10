@@ -1,0 +1,7 @@
+{
+  "name": "phonebook-app",
+  "scripts": {
+    "build": "cd backend && npm run build:ui",
+    "start": "cd backend && npm run start"
+  }
+}
