@@ -8,13 +8,16 @@
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push",
     "start": "node index.js",
     "dev": "node --watch index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint ."
   },
   "author": "Mykhailo Litvinov",
   "license": "MIT",
   "dependencies": {
+    "@stylistic/eslint-plugin": "^5.6.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
+    "eslint": "^9.39.1",
     "express": "^5.2.1",
     "mongoose": "^9.0.1",
     "morgan": "^1.10.1"

@@ -1,6 +1,6 @@
-const mongoose = require(`mongoose`)
+const mongoose = require('mongoose')
 
-if (process.argv.length != 3 && process.argv.length != 5) {
+if (process.argv.length !== 3 && process.argv.length !== 5) {
   console.log('Usage: <password> [name] [phone_number]')
   process.exit(1)
 }
@@ -9,9 +9,9 @@ const password = process.argv[2]
 
 const url = `mongodb+srv://mlitvino:${password}@cluster0.kurkdns.mongodb.net/?appName=Cluster0`
 
-mongoose.set(`strictQuery`, false)
+mongoose.set('strictQuery', false)
 
-mongoose.connect(url, {family: 4})
+mongoose.connect(url, { family: 4 })
 
 console.log(mongoose.connection.readyState)
 
@@ -22,7 +22,7 @@ const personSchema = new mongoose.Schema({
 
 const Person = mongoose.model('Person', personSchema)
 
-if (process.argv.length == 3) {
+if (process.argv.length === 3) {
   console.log('phonebook:')
   Person
     .find({})
@@ -44,7 +44,7 @@ if (process.argv.length == 3) {
 
   person
     .save()
-    .then(result => {
+    .then(() => {
       console.log(`added ${person.name} number ${person.number} to phonebook`)
       mongoose.connection.close()
     })
