@@ -1,0 +1,33 @@
+{
+  "editor.insertSpaces": true,
+  "editor.tabSize": 2,
+  "[javascript]": {
+    "editor.tabSize": 2
+  },
+  "[javascriptreact]": {
+    "editor.tabSize": 2
+  },
+
+  // Reduce noise
+  "editor.wordBasedSuggestions": "off",
+  "editor.snippetSuggestions": "bottom",
+  "editor.suggest.showWords": false,
+  "editor.suggest.showSnippets": true,
+
+  // Improve matching behavior
+  "editor.suggest.filterGraceful": true,
+  "editor.suggest.localityBonus": true,
+
+  // JS/TS IntelliSense
+  "javascript.suggest.enabled": true,
+  "typescript.suggest.enabled": true,
+  "javascript.suggestionActions.enabled": true,
+  "typescript.suggestionActions.enabled": true,
+
+  // Import suggestions
+  "javascript.suggest.autoImports": true,
+  "typescript.suggest.autoImports": true,
+
+  // Optional: accept suggestion by Enter only when it makes sense
+  "editor.acceptSuggestionOnEnter": "smart"
+}
