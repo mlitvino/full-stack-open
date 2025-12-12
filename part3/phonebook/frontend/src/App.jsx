@@ -104,21 +104,19 @@ const App = () => {
             }, 3000)
           })
         return
+    } else if (storedPerson == undefined) {
+      personService
+        .create(personObject)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+          setNewName('')
+          setNewNumber('')
+          setMessage(`Added ${returnedPerson.name}`)
+          setTimeout(() => {
+            setMessage(null)
+          }, 3000)
+        })
     }
-
-    personService
-      .create(personObject)
-      .then(returnedPerson => {
-        setPersons(persons.concat(returnedPerson))
-        setNewName('')
-        setNewNumber('')
-        setMessage(`Added ${returnedPerson.name}`)
-        setTimeout(() => {
-          setMessage(null)
-        }, 3000)
-      })
-
-
   }
 
   const handleNameChange = (event) => {
