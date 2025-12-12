@@ -1,6 +1,6 @@
-const PORT = process.env.PORT || 3001
-
+require(`dotenv`).config()
 const express = require('express')
+const Note = require(`./models/note`)
 const app = express()
 
 app.use(express.static('dist'))
@@ -34,22 +34,21 @@ app.get('/', (request, response) => {
 })
 
 app.get('/api/notes', (request, response) => {
-  if (notes) {
+  Note.find({}).then(notes => {
     response.json(notes)
-  } else {
-    response.status(404).end()
-  }
+  })
 })
 
-app.get('/api/notes/:id', (request, response) => {
-  const id = request.params.id
-  const note = notes.find(note => note.id === id)
-
-  if (note) {
-    response.json(note)
-  } else {
-    response.status(404).end()
-  }
+app.get('/api/notes/:id', (request, response, next) => {
+  Note.findById(request.params.id)
+    .then(note => {
+      if (note) {
+        response.json(note)
+      } else {
+        response.status(404).end()
+      }
+    })
+    .catch(error => next(error))
 })
 
 app.delete(`/api/notes/:id`, (request, response) => {
@@ -58,13 +57,6 @@ app.delete(`/api/notes/:id`, (request, response) => {
 
   response.status(204).end()
 })
-
-const generateId = () => {
-  const maxId = notes.length > 0
-    ? Math.max(...notes.map(n => Number(n.id)))
-    : 0
-  return String(maxId + 1)
-}
 
 app.post('/api/notes', (request, response) => {
   const body = request.body
@@ -75,17 +67,29 @@ app.post('/api/notes', (request, response) => {
     })
   }
 
-  const note = {
+  const note = new Note({
     content: body.content,
     important: body.important || false,
-    id: generateId(),
-  }
+  })
 
-  notes = notes.concat(note)
-
-  response.json(note)
+  note.save().then(savedNote => {
+    response.json(savedNote)
+  })
 })
 
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id'})
+  }
+
+  next(error)
+}
+
+app.use(errorHandler)
+
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`server running on port ${PORT}`)
 })
