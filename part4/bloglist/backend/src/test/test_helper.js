@@ -1,5 +1,16 @@
 const Blog = require('../models/blog')
 
+const listWithOneBlog = [
+  {
+    _id: '5a422a851b54a676234d17f8',
+    title: 'Goto statement',
+    author: 'Edsger W. Dijkstra',
+    url: 'https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf',
+    likes: 5,
+    __v: 0
+  }
+]
+
 const initialBlogs = [
   {
     _id: '5a422a851b54a676234d17f7',
@@ -66,6 +77,7 @@ const blogsInDb = async () => {
 
 module.exports = {
   initialBlogs,
+  listWithOneBlog,
   nonExistingId,
   blogsInDb
 }
