@@ -5,12 +5,34 @@ const assert = require('node:assert')
 const app = require('../app')
 const Blog = require('../models/blog')
 const helper = require('./test_helper')
+const User = require('../models/user')
+const bcrypt = require('bcrypt')
 
 const api = supertest(app)
+let token = ''
+let tokenHeader = {}
 
 beforeEach(async () => {
   await Blog.deleteMany({})
   await Blog.insertMany(helper.initialBlogs)
+  await User.deleteMany({})
+  const user = helper.initialUsers[0]
+
+  const passwordHash = await bcrypt.hash(user.password, 10)
+  const userToSave = new User({
+    username: user.username,
+    name: user.name,
+    passwordHash
+  })
+  await userToSave.save()
+
+  const response = await api
+    .post('/api/login')
+    .send(user)
+    .expect(200)
+
+  token = response.body.token
+  tokenHeader = { 'Authorization': `Beaver ${token}` }
 })
 
 describe('get method', () => {
@@ -35,7 +57,7 @@ describe('get method', () => {
 })
 
 describe('post method', () => {
-  test('a valid blog post can be added', async () => {
+  test.only('a valid blog post can be added', async () => {
     const newBlog = {
       title: 'goto is bad',
       author: 'Me',
@@ -46,6 +68,7 @@ describe('post method', () => {
     await api
       .post('/api/blogs')
       .send(newBlog)
+      .set(tokenHeader)
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
@@ -67,27 +90,36 @@ describe('post method', () => {
     await api
       .post('/api/blogs')
       .send(newBlog)
+      .set(tokenHeader)
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
     const blogs = await helper.blogsInDb()
-    const toFind = blogs.find(b => b.id === newBlog._id)
+    const toFind = blogs.find(b =>
+      b.title === newBlog.title &&
+      b.author === newBlog.author &&
+      b.url === newBlog.url
+    )
     assert.strictEqual(toFind.likes, 0)
   })
 
   describe('delete method', () => {
     test('succeeds with deletion of valid blog', async () => {
       const blogsAtStart = await helper.blogsInDb()
-      const firstBlog = blogsAtStart[0]
+      const userAtStart = (await helper.usersInDb())[0]
+      const newBlog = { ...blogsAtStart[0], creator: userAtStart.id }
+
+      await Blog.findByIdAndUpdate(newBlog.id, newBlog)
 
       await api
-        .delete(`/api/blogs/${firstBlog.id}`)
+        .delete(`/api/blogs/${newBlog.id}`)
+        .set(tokenHeader)
         .expect(204)
 
       const blogsAtEnd = await helper.blogsInDb()
 
       const contents = blogsAtEnd.map(b => b.id)
-      assert(!contents.includes(firstBlog.id))
+      assert(!contents.includes(newBlog.id))
 
       assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
     })
@@ -101,6 +133,7 @@ describe('post method', () => {
     await api
       .post('/api/blogs')
       .send(newBlog)
+      .set(tokenHeader)
       .expect(400)
       .expect('Content-Type', /application\/json/)
   })
@@ -118,6 +151,7 @@ describe('post method', () => {
       const response = await api
         .put(`/api/blogs/${blogToUpdate.id}`)
         .send(blogToSend)
+        .set(tokenHeader)
         .expect(200)
 
       assert.deepStrictEqual(response.body.likes, blogToSend.likes)
