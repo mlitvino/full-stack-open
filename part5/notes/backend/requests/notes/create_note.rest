@@ -1,0 +1,28 @@
+POST http://localhost:3001/api/notes/
+content-type: application/json
+
+{
+    "content": "sample",
+    "important": true
+}
+
+###
+POST http://localhost:3001/api/notes/
+content-type: application/json
+
+{
+    "content": "vostok note 1",
+    "important": true,
+    "userId": "69469bfb0da36d16b5e5a60e"
+}
+
+###
+
+POST http://localhost:3001/api/notes/
+content-type: application/json
+
+{
+    "content": "vostok note 1000",
+    "important": false,
+    "userId": "69469bfb0da36d16b5e5a60e"
+}
