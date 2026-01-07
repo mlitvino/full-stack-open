@@ -1,14 +1,26 @@
 import Blog from './Blog'
 
-const BlogList = ({ blogs, user }) => {
+const BlogList = ({ blogs, handleLike, handleDeletion }) => {
+  blogs.sort((a, b) => {
+    if (a.likes > b.likes) {
+      return -1
+    } else {
+      return 1
+    }
+  })
 
   return (
     <div>
-      <h2>blogs</h2>
-        <p>{user.name} logged in</p>
-        {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
-        )}
+      {blogs.map(blog => {
+        return (
+          <Blog
+            key={blog.id }
+            blog={blog}
+            handleLike={handleLike}
+            handleDeletion={handleDeletion}
+          />
+        )
+      })}
     </div>
   )
 }

@@ -32,7 +32,7 @@ beforeEach(async () => {
     .expect(200)
 
   token = response.body.token
-  tokenHeader = { 'Authorization': `Beaver ${token}` }
+  tokenHeader = { 'Authorization': `Bearer ${token}` }
 })
 
 describe('get method', () => {

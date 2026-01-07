@@ -8,6 +8,7 @@
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push",
     "start": "NODE_ENV=production node src/index.js",
     "dev": "NODE_ENV=development node --watch src/index.js",
+    "dev-test": "NODE_ENV=test node --watch src/index.js",
     "test": "NODE_ENV=test node --test-concurrency=1 --test",
     "test-only": "NODE_ENV=test node --test-concurrency=1 --test-only --test",
     "lint": "eslint ."

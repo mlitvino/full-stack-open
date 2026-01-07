@@ -19,9 +19,7 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
   const body = request.body
   const user = request.user
 
-  if (!user) {
-    return response.status(400).json({ error: 'userId missing or invalid' })
-  } else if (!body.url || !body.title) {
+  if (!body.url || !body.title) {
     return response.status(400).json({ error: 'url or title is missing' })
   }
 
@@ -66,22 +64,32 @@ blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) =
   response.status(204).end()
 })
 
-blogsRouter.put('/:id', async (request, response) => {
+blogsRouter.put('/:id', middleware.userExtractor,async (request, response) => {
   const body = request.body
-  const newBlog = { ...body }
+  const user = request.user
+
+  if (!body.url || !body.title) {
+    return response.status(400).json({ error: 'url or title is missing' })
+  }
+
+  const newBlog = {
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.likes,
+    creator: user._id
+  }
 
   if (!newBlog.likes)
     newBlog.likes = 0
 
-  if (!newBlog.url || !newBlog.title) {
-    return response.status(400).json({ error: 'url or title is missing' })
-  }
-
-  const storedBlog = await Blog.findByIdAndUpdate(
-    request.params.id,
-    newBlog,
-    { new: true, runValidators: true }
-  )
+  const storedBlog = await Blog
+    .findByIdAndUpdate(
+      request.params.id,
+      newBlog,
+      { new: true, runValidators: true }
+    )
+    .populate('creator', { username: 1, name: 1, id: 1 })
 
   if (!storedBlog) {
     return response.status(404).end()

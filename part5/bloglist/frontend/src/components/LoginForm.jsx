@@ -3,7 +3,7 @@ import { useState } from 'react'
 import loginService from '../services/login'
 import blogService from '../services/blogs'
 
-const LoginForm = ({ setUser, setErrorMessage }) => {
+const LoginForm = ({ setUser, setMessage, setErrorMessage }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
@@ -12,15 +12,24 @@ const LoginForm = ({ setUser, setErrorMessage }) => {
 
     try {
       const user = await loginService.login({ username, password })
+
+      window.localStorage.setItem(
+        'loggedInUser', JSON.stringify(user)
+      )
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
-    } catch {
-      console.log('Error: failed to login')
+
+      setMessage(`${user.name} logged in successfully`)
       setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+        setMessage('')
+      }, 3000)
+    } catch {
+      setErrorMessage('wrong username pr password')
+      setTimeout(() => {
+        setErrorMessage('')
+      }, 3000)
     }
   }
 
