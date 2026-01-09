@@ -1,6 +1,6 @@
 import Blog from './Blog'
 
-const BlogList = ({ blogs, handleLike, handleDeletion }) => {
+const BlogList = ({ user, blogs, handleLike, handleDeletion }) => {
   blogs.sort((a, b) => {
     if (a.likes > b.likes) {
       return -1
@@ -15,6 +15,7 @@ const BlogList = ({ blogs, handleLike, handleDeletion }) => {
         return (
           <Blog
             key={blog.id }
+            user={user}
             blog={blog}
             handleLike={handleLike}
             handleDeletion={handleDeletion}

@@ -26,7 +26,7 @@ const LoginForm = ({ setUser, setMessage, setErrorMessage }) => {
         setMessage('')
       }, 3000)
     } catch {
-      setErrorMessage('wrong username pr password')
+      setErrorMessage('wrong username or password')
       setTimeout(() => {
         setErrorMessage('')
       }, 3000)

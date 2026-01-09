@@ -5,13 +5,35 @@ const assert = require('node:assert')
 const app = require('../app')
 const Note = require('../models/note')
 const helper = require('./test_helper')
+const User = require('../models/user')
+const bcrypt = require('bcrypt')
 
 const api = supertest(app)
+let token = ''
+let tokenHeader = {}
 
 describe('when there is initially some notes saved', () => {
   beforeEach(async () => {
     await Note.deleteMany({})
     await Note.insertMany(helper.initialNotes)
+    await User.deleteMany({})
+    const user = helper.initialUsers[0]
+
+    const passwordHash = await bcrypt.hash(user.password, 10)
+    const userToSave = new User({
+      username: user.username,
+      name: user.name,
+      passwordHash
+    })
+    await userToSave.save()
+
+    const response = await api
+      .post('/api/login')
+      .send(user)
+      .expect(200)
+
+    token = response.body.token
+    tokenHeader = { 'Authorization': `Bearer ${token}` }
   })
 
   test('notes are returned as json', async () => {
@@ -78,6 +100,7 @@ describe('when there is initially some notes saved', () => {
       await api
         .post('/api/notes')
         .send(newNote)
+        .set(tokenHeader)
         .expect(201)
         .expect('Content-Type', /application\/json/)
 
@@ -96,6 +119,7 @@ describe('when there is initially some notes saved', () => {
       await api
         .post('/api/notes')
         .send(newNote)
+        .set(tokenHeader)
         .expect(400)
 
       const response = await api.get('/api/notes')
@@ -109,6 +133,7 @@ describe('when there is initially some notes saved', () => {
       await api
         .post('/api/notes')
         .send(newNote)
+        .set(tokenHeader)
         .expect(400)
 
       const notesAtEnd = await helper.notesInDb()

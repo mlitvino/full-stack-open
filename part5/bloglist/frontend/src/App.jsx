@@ -100,7 +100,7 @@ const App = () => {
               handleBlogCreation={handleBlogCreation}
             />
           </Togglable>
-          <BlogList blogs={blogs} handleLike={handleLike} handleDeletion={handleDeletion}/>
+          <BlogList user={user} blogs={blogs} handleLike={handleLike} handleDeletion={handleDeletion}/>
         </>
       }
     </div>
