@@ -109,6 +109,38 @@ describe('Blog app', () => {
       })
 
       test('blogs are sorted by likes', async ({ page }) => {
+        for (let blog of blogs) {
+          await createBlog(page, blog)
+        }
+
+        const count = await page.getByRole('button', { name: 'view' }).count()
+        for (let i = 0; i < count; i++) {
+          await page.getByRole('button', { name: 'view' }).first().click()
+        }
+
+        const firstBlog = page.getByTestId('blog').filter({ hasText: blogs[0].title })
+        for (let i = 0; i < 5; i++) {
+          await firstBlog.getByRole('button', { name: 'like' }).click()
+          await firstBlog.getByText(`likes ${i + 1}`).waitFor()
+        }
+
+        const secondBlog = page.getByTestId('blog').filter({ hasText: blogs[1].title })
+        for (let i = 0; i < 3; i++) {
+          await secondBlog.getByRole('button', { name: 'like' }).click()
+          await secondBlog.getByText(`likes ${i + 1}`).waitFor()
+        }
+
+        const blogElements = await page.getByTestId('blog').all()
+        const likes = []
+        for (const blog of blogElements) {
+          const likesText = await blog.locator('.blog-likes').textContent()
+          const likesCount = parseInt(likesText.match(/\d+/)[0])
+          likes.push(likesCount)
+        }
+
+        for (let i = 0; i < likes.length - 1; i++) {
+          expect(likes[i]).toBeGreaterThanOrEqual(likes[i + 1])
+        }
       })
     })
   })
