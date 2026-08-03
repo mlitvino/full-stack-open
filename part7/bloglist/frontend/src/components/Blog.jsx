@@ -29,7 +29,7 @@ const Blog = ({ user, blog, handleLike, handleDeletion }) => {
         </Typography>
 
         <Stack direction="row" spacing={1}>
-          { user &&
+          {user && (
             <Button
               variant="contained"
               size="small"
@@ -38,8 +38,8 @@ const Blog = ({ user, blog, handleLike, handleDeletion }) => {
             >
               like
             </Button>
-          }
-          { user && user.name === blog.creator?.name &&
+          )}
+          {user && user.name === blog.creator?.name && (
             <Button
               variant="outlined"
               color="error"
@@ -49,7 +49,7 @@ const Blog = ({ user, blog, handleLike, handleDeletion }) => {
             >
               delete
             </Button>
-          }
+          )}
         </Stack>
       </CardContent>
     </Card>

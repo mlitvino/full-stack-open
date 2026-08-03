@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import Blog from './Blog'
+import { MemoryRouter } from 'react-router-dom'
 import BlogForm from './BlogForm'
 import { expect, test, vi } from 'vitest'
 import userEvent from '@testing-library/user-event'
@@ -14,10 +14,22 @@ const blog = {
   }
 }
 
-test('form calls the event handler and new blog is created', async () => {
-  const mockHandler = vi.fn()
+const mockAdd = vi.fn()
 
-  render(<BlogForm handleBlogCreation={mockHandler} />)
+vi.mock('../stores/blogsStore', () => ({
+  useBlogsActions: () => ({ add: mockAdd })
+}))
+
+vi.mock('../stores/notificationStore', () => ({
+  useNotificationActions: () => ({ setNotification: vi.fn(), setError: vi.fn() })
+}))
+
+test('form calls add and a new blog is created', async () => {
+  render(
+    <MemoryRouter>
+      <BlogForm />
+    </MemoryRouter>
+  )
 
   const user = userEvent.setup()
 
@@ -32,12 +44,10 @@ test('form calls the event handler and new blog is created', async () => {
   const submitButton = screen.getByText('create')
   await user.click(submitButton)
 
-  expect(mockHandler.mock.calls).toHaveLength(1)
-  expect(mockHandler.mock.calls[0][0]).toEqual({
+  expect(mockAdd.mock.calls).toHaveLength(1)
+  expect(mockAdd.mock.calls[0][0]).toEqual({
     title: blog.title,
     author: blog.author,
     url: blog.url
   })
 })
-
-

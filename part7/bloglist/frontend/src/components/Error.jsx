@@ -1,6 +1,9 @@
 import { Alert } from '@mui/material'
+import { useError } from '../stores/notificationStore'
 
-const Error = ({ errorMessage }) => {
+const Error = () => {
+  const errorMessage = useError()
+
   if (!errorMessage) {
     return null
   }

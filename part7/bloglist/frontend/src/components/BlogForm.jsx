@@ -1,19 +1,37 @@
-import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { TextField, Button } from '@mui/material'
 
-const BlogForm = ({ handleBlogCreation }) => {
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
+import useField from '../hooks/useField'
+import { useBlogsActions } from '../stores/blogsStore'
+import { useNotificationActions } from '../stores/notificationStore'
 
-  const handleSubmit = (event) => {
+const BlogForm = () => {
+  const { reset: resetTitle, ...title } = useField('text')
+  const { reset: resetAuthor, ...author } = useField('text')
+  const { reset: resetUrl, ...url } = useField('text')
+  const { add } = useBlogsActions()
+  const { setNotification, setError } = useNotificationActions()
+  const navigate = useNavigate()
+
+  const handleSubmit = async (event) => {
     event.preventDefault()
     const newBlog = {
-      title: title,
-      author: author,
-      url: url
+      title: title.value,
+      author: author.value,
+      url: url.value
     }
-    handleBlogCreation(newBlog)
+
+    try {
+      await add(newBlog)
+      resetTitle()
+      resetAuthor()
+      resetUrl()
+      navigate('/')
+
+      setNotification(`a new blog ${newBlog.title} by ${newBlog.author} added`)
+    } catch {
+      setError('failed to add new blog')
+    }
   }
 
   return (
@@ -21,28 +39,13 @@ const BlogForm = ({ handleBlogCreation }) => {
       <h2>create new</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          <TextField
-            margin="normal"
-            label="title"
-            value={title}
-            onChange={({ target }) => setTitle(target.value)}
-          />
+          <TextField margin="normal" label="title" {...title} />
         </div>
         <div>
-          <TextField
-            margin="normal"
-            label="author"
-            value={author}
-            onChange={({ target }) => setAuthor(target.value)}
-          />
+          <TextField margin="normal" label="author" {...author} />
         </div>
         <div>
-          <TextField
-            margin="normal"
-            label="url"
-            value={url}
-            onChange={({ target }) => setUrl(target.value)}
-          />
+          <TextField margin="normal" label="url" {...url} />
         </div>
         <div>
           <Button type="submit" variant="contained" style={{ marginTop: 10 }}>

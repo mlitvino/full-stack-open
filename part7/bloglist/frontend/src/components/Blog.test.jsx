@@ -38,7 +38,9 @@ test('the creator is also shown the delete button', async () => {
   const creator = { name: 'Test Creator' }
   const mockLikesHandler = vi.fn()
 
-  render(<Blog blog={blog} user={creator} handleLike={mockLikesHandler} handleDeletion={() => {}} />)
+  render(
+    <Blog blog={blog} user={creator} handleLike={mockLikesHandler} handleDeletion={() => {}} />
+  )
 
   expect(screen.getByText('delete')).toBeDefined()
 

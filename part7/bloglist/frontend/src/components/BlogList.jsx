@@ -6,9 +6,11 @@ const BlogList = ({ blogs }) => {
   return (
     <div>
       <ul>
-        {sortedBlogs.map(blog => (
+        {sortedBlogs.map((blog) => (
           <li key={blog.id}>
-            <Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link>
+            <Link to={`/blogs/${blog.id}`}>
+              {blog.title} {blog.author}
+            </Link>
           </li>
         ))}
       </ul>

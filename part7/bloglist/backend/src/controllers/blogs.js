@@ -46,6 +46,28 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
   response.status(201).json(populatedBlog)
 })
 
+blogsRouter.post('/:id/comments', async (request, response) => {
+  const { comment } = request.body
+
+  if (!comment) {
+    return response.status(400).json({ error: 'comment is missing' })
+  }
+
+  const blog = await Blog.findById(request.params.id)
+  if (!blog) {
+    return response.status(404).json({ error: 'blog not found' })
+  }
+
+  blog.comments = blog.comments.concat(comment)
+  await blog.save()
+
+  const populatedBlog = await Blog
+    .findById(blog._id)
+    .populate('creator', { username: 1, name: 1, id: 1 })
+
+  response.status(201).json(populatedBlog)
+})
+
 blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
   const idToDelete = request.params.id
   const user = request.user
