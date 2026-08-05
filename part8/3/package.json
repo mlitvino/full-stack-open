@@ -1,0 +1,22 @@
+{
+  "name": "graphql-phonebook",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "graphql-phonebook-backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently -n graphql-phonebook-backend,frontend -c blue,green \"npm run dev -w graphql-phonebook-backend\" \"npm run dev -w frontend\"",
+    "build": "npm run build -w frontend",
+    "start": "npm run build && npm run start -w graphql-phonebook-backend",
+    "lint": "npm run lint -w graphql-phonebook-backend && npm run lint -w frontend",
+    "test:graphql-phonebook-backend": "npm run test -w graphql-phonebook-backend",
+    "test:frontend": "npm run test -w frontend",
+    "test:e2e": "npm run test -w e2e-test",
+    "test": "npm run test:graphql-phonebook-backend && npm run test:frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
