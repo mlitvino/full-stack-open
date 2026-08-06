@@ -28,7 +28,7 @@ const resolvers = {
     }
   },
   Mutation: {
-    addPerson: async (root, args) => {
+    addPerson: async (root, args, context) => {
       const currentUser = context.currentUser
 
       if (!currentUser) {
@@ -53,7 +53,7 @@ const resolvers = {
       const person = new Person({ ...args })
 
       try {
-        await person.save
+        await person.save()
         currentUser.friends = currentUser.friends.concat(person)
         await currentUser.save()
       } catch (error) {
