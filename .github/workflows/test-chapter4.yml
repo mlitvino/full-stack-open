@@ -1,0 +1,31 @@
+name: Test library-backend
+
+on:
+  # push:
+  #   branches: [ main, master ]
+  #   paths: [ 'part8/fs-graphql/**' ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Install library-backend dependencies
+        working-directory: part8/fs-graphql/library-backend
+        run: npm ci
+
+      - name: Install test dependencies
+        working-directory: part8/fs-graphql/tests-chapter4
+        run: npm ci
+
+      - name: Run tests
+        working-directory: part8/fs-graphql/tests-chapter4
+        run: npm test
