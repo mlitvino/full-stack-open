@@ -1,10 +1,23 @@
-import { useQuery } from "@apollo/client/react"
+import { useQuery, useSubscription, useApolloClient } from "@apollo/client/react"
 import { useMemo, useState } from "react"
 
-import { ALL_BOOKS } from "../queries"
+import { ALL_BOOKS, BOOK_ADDED } from "../queries"
+import { addBookToCache } from '../utils/apolloCache'
 
 const Books = (props) => {
   const [genre, setGenre] = useState(null)
+  const client = useApolloClient()
+
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data }) => {
+      const addedBook = data.data.bookAdded
+      addBookToCache(client.cache)
+      props.notify(`New book added: ${addedBook.title}`, 'success')
+    },
+    onError: (error) => {
+      console.error('bookAdded subscription error:', error)
+    },
+  })
 
   const allBooksResult = useQuery(ALL_BOOKS, {
     skip: !props.show

@@ -10,7 +10,7 @@ import Notify from './components/Notify'
 
 const App = () => {
   const [token, setToken] = useState(localStorage.getItem('library-backend-token'))
-  const [errorMessage, setErrorMessage] = useState('')
+  const [notification, setNotification] = useState(null)
   const [page, setPage] = useState('authors')
   const client = useApolloClient()
 
@@ -21,10 +21,10 @@ const App = () => {
     client.resetStore()
   }
 
-  const notify = (message) => {
-    setErrorMessage(message)
+  const notify = (message, type = 'error') => {
+    setNotification({ message, type })
     setTimeout(() => {
-      setErrorMessage(null)
+      setNotification(null)
     }, 10000)
   }
 
@@ -45,14 +45,14 @@ const App = () => {
         }
       </div>
 
-      <Notify errorMessage={errorMessage} />
+      <Notify notification={notification} />
 
       <Authors
         show={page === 'authors'}
         token={token}
       />
 
-      <Books show={page === 'books'} />
+      <Books show={page === 'books'} notify={notify} />
 
       <NewBook show={page === 'add'} />
 

@@ -1,9 +1,12 @@
 const { GraphQLError } = require("graphql")
+const { PubSub } = require('graphql-subscriptions')
 const jwt = require("jsonwebtoken")
 
 const Book = require("./models/book")
 const Author = require("./models/author")
 const User = require("./models/user")
+
+const pubsub = new PubSub()
 
 const resolvers = {
   Query: {
@@ -29,7 +32,23 @@ const resolvers = {
       return Book.find(filter).populate('author')
     },
     allAuthors: async () => {
-      return Author.find({})
+      return Author.aggregate([
+        {
+          $lookup: {
+            from: 'books',
+            localField: '_id',
+            foreignField: 'author',
+            as: 'books',
+          },
+        },
+        {
+          $addFields: {
+            id: { $toString: '$_id' },
+            bookCount: { $size: '$books' },
+          },
+        },
+        { $project: { books: 0 } },
+      ])
     },
     me: (root, args, context) => {
       return context.currentUser
@@ -37,6 +56,10 @@ const resolvers = {
   },
   Author: {
     bookCount: async (root) => {
+      if (typeof root.bookCount === 'number') {
+        return root.bookCount
+      }
+
       return Book.countDocuments({ author: root._id })
     }
   },
@@ -93,7 +116,11 @@ const resolvers = {
           })
       }
 
-      return book.populate('author')
+      const populatedBook = await book.populate('author')
+
+      pubsub.publish('BOOK_ADDED', { bookAdded: populatedBook })
+
+      return populatedBook
     },
     editAuthor: async (root, args, { currentUser }) => {
       if (!currentUser) {
@@ -171,7 +198,12 @@ const resolvers = {
       await User.deleteMany({})
       return true
     },
-  }
+  },
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterableIterator('BOOK_ADDED')
+    },
+  },
 }
 
 module.exports = resolvers

@@ -24,6 +24,10 @@ const typeDefs = /* GraphQL */`
     bookCount: Int!
   }
 
+  type Subscription {
+    bookAdded: Book!
+  }
+
   type Query {
     bookCount: Int!
     authorCount: Int!,
