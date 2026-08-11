@@ -71,10 +71,7 @@ function checkExercisesBody(req: Request) {
     throw new Error('parameters missing');
   }
 
-  const { target, daily_exercises: dailyExercises } = body as {
-    target: unknown,
-    daily_exercises: unknown
-  };
+  const { target, daily_exercises: dailyExercises } = body;
 
   const parsedTarget = Number(target);
 
