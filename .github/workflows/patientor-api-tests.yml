@@ -27,21 +27,12 @@ jobs:
       working-directory: ./part9/fs-typescript/patientor/backend
       run: npm run lint
 
-    - name: Start patientor backend server
-      working-directory: ./part9/fs-typescript/patientor/backend
-      run: |
-        npm start &
-        echo $! > server.pid
-        sleep 3
-
     - name: Install test dependencies
       working-directory: ./part9/fs-typescript/patientor-api-tests
       run: npm install
 
-    - name: Install Playwright browsers
-      working-directory: ./part9/fs-typescript/patientor-api-tests
-      run: npx playwright install --with-deps chromium
-
+    # The backend is started by Playwright's `webServer` config, which waits
+    # for /api/ping to respond and shuts the server down afterwards.
     - name: Run API tests
       working-directory: ./part9/fs-typescript/patientor-api-tests
       run: npm test
@@ -53,11 +44,3 @@ jobs:
         name: playwright-report
         path: part9/fs-typescript/patientor-api-tests/playwright-report/
         retention-days: 30
-
-    - name: Stop patientor backend server
-      if: always()
-      working-directory: ./part9/fs-typescript/patientor/backend
-      run: |
-        if [ -f server.pid ]; then
-          kill $(cat server.pid) || true
-        fi
