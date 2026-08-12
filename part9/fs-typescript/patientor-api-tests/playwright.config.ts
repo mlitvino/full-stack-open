@@ -12,14 +12,4 @@ export default defineConfig({
     baseURL: 'http://localhost:3001',
     trace: 'on-first-retry',
   },
-  // Playwright starts the backend itself and waits until `url` responds,
-  // instead of relying on a backgrounded `npm start &` surviving between
-  // CI steps (it often doesn't) plus a fixed `sleep`.
-  webServer: {
-    command: 'npm start',
-    cwd: '../patientor/backend',
-    url: 'http://localhost:3001/api/ping',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000,
-  },
 });
