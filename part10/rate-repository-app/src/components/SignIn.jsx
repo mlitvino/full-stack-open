@@ -5,6 +5,10 @@ import * as yup from 'yup';
 import FormikTextInput from './FormikTextInput';
 import Text from './Text';
 import theme from '../theme';
+import useSignIn from '../hooks/useSignIn';
+import useAuthStorage from '../hooks/useAuthStorage';
+import { useNavigate } from 'react-router-native';
+import { useApolloClient } from '@apollo/client/react';
 
 const styles = StyleSheet.create({
   container: {
@@ -60,8 +64,22 @@ const SignInForm = ({ onSubmit }) => (
 );
 
 const SignIn = () => {
-  const onSubmit = (values) => {
-    console.log(values);
+  const [signIn] = useSignIn()
+  const authStorage = useAuthStorage();
+  const navigate = useNavigate()
+  const apolloClient = useApolloClient()
+
+  const onSubmit = async (values) => {
+    const { username, password } = values;
+
+    try {
+      const { data } = await signIn({ username, password })
+      await authStorage.setAccessToken(data.authenticate.accessToken);
+      await apolloClient.resetStore()
+      navigate('/')
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
