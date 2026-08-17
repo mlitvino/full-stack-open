@@ -7,6 +7,21 @@ export const USER_DETAILS = gql`
   }
 `;
 
+export const REVIEW_DETAILS = gql`
+  fragment ReviewBaseFields on Review {
+    id
+    text
+    rating
+    createdAt
+    repositoryId
+    user {
+      ...UserBaseFields
+    }
+  }
+
+  ${USER_DETAILS}
+`;
+
 export const REPOSITORY_DETAILS = gql`
   fragment RepositoryBaseFields on Repository {
     id
@@ -18,5 +33,15 @@ export const REPOSITORY_DETAILS = gql`
     ratingAverage
     reviewCount
     ownerAvatarUrl
+    url,
+    reviews {
+      edges {
+        node {
+          ...ReviewBaseFields
+        }
+      }
+    }
   }
+
+  ${REVIEW_DETAILS}
 `;

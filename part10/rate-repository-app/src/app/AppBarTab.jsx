@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet } from 'react-native';
 
-import Text from './Text';
+import Text from '../components/Text';
 import theme from '../theme';
 
 const styles = StyleSheet.create({

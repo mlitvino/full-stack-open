@@ -2,9 +2,9 @@ import { View, Pressable, StyleSheet } from 'react-native';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 
-import FormikTextInput from './FormikTextInput';
-import Text from './Text';
-import theme from '../theme';
+import FormikTextInput from '../../../components/FormikTextInput';
+import Text from '../../../components/Text';
+import theme from '../../../theme';
 import useSignIn from '../hooks/useSignIn';
 import useAuthStorage from '../hooks/useAuthStorage';
 import { useNavigate } from 'react-router-native';
@@ -63,6 +63,16 @@ const SignInForm = ({ onSubmit }) => (
   </View>
 );
 
+export const SignInContainer = ({ onSubmit }) => (
+  <Formik
+    initialValues={initialValues}
+    validationSchema={validationSchema}
+    onSubmit={onSubmit}
+  >
+    {({ handleSubmit }) => <SignInForm onSubmit={handleSubmit} />}
+  </Formik>
+);
+
 const SignIn = () => {
   const [signIn] = useSignIn()
   const authStorage = useAuthStorage();
@@ -82,15 +92,7 @@ const SignIn = () => {
     }
   };
 
-  return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={onSubmit}
-    >
-      {({ handleSubmit }) => <SignInForm onSubmit={handleSubmit} />}
-    </Formik>
-  );
+  return <SignInContainer onSubmit={onSubmit} />;
 };
 
 export default SignIn;
