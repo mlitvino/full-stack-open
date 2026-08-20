@@ -20,7 +20,9 @@ jobs:
       run: npm install
     - name: Check style
       run: npm run eslint
-    - name: Test
+    - name: Unit tests
       run: npm run test
     - name: Build
       run: npm run build
+    - name: e2e test
+      run: npm run test:e2e
