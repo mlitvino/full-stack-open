@@ -27,6 +27,8 @@ jobs:
       run: npm run test
     - name: Build
       run: npm run build
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps chromium
     - name: e2e test
       run: npm run test:e2e
   tag_release:
