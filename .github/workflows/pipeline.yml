@@ -1,20 +1,20 @@
 name: Deployment pipeline
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches: [main]
-    types: [opened, synchronize]
-  #workflow_dispatch:
+  #push:
+  #  branches:
+  #    - main
+  #pull_request:
+  #  branches: [main]
+  #  types: [opened, synchronize]
+  workflow_dispatch:
 
 jobs:
-  simple_deployment_pipeline:
+  build_and_test:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: part11
+        working-directory: part11/pokemons
     steps:
     - uses: actions/checkout@v6
     - uses: actions/setup-node@v6
@@ -32,18 +32,9 @@ jobs:
       run: npx playwright install --with-deps chromium
     - name: e2e test
       run: npm run test:e2e
-    - name: Build failure notification
-      if: ${{ failure() }}
-      uses: sarisia/actions-status-discord@v1
-      with:
-        webhook: ${{ secrets.DISCORD_WEBHOOK }}
-        status: Failure
-        title: Build failed
-        description: |
-          Commit `${{ github.sha }}` by ${{ github.actor }} broke the build! Fix it!
-        color: 0xff0000
+
   tag_release:
-    needs: [simple_deployment_pipeline]
+    needs: [build_and_test]
     if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
     runs-on: ubuntu-latest
     permissions:
@@ -58,13 +49,29 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         DEFAULT_BUMP: patch
+
+  notify:
+    needs: [build_and_test]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
     - name: Deployment success notification
-      if: ${{ success() }}
+      if: ${{ needs.build_and_test.result == 'success' }}
       uses: sarisia/actions-status-discord@v1
       with:
         webhook: ${{ secrets.DISCORD_WEBHOOK }}
         status: Success
         title: A new version has been deployed
         description: |
-          Version `${{ steps.tag_version.outputs.new_tag }}` by ${{ github.actor }}
+          Commit `${{ github.sha }}` by ${{ github.actor }} passed the pipeline
         color: 0x00ff00
+    - name: Build failure notification
+      if: ${{ needs.build_and_test.result == 'failure' }}
+      uses: sarisia/actions-status-discord@v1
+      with:
+        webhook: ${{ secrets.DISCORD_WEBHOOK }}
+        status: Failure
+        title: Build failed
+        description: |
+          Commit `${{ github.sha }}` by ${{ github.actor }} broke the build! Fix it!
+        color: 0xff0000

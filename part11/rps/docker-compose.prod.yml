@@ -1,0 +1,36 @@
+include:
+  - docker-compose.yml
+
+services:
+
+  frontend:
+    build:
+      target: production
+    volumes:
+      - frontend_build:/usr/share/nginx/html
+
+  backend:
+    build:
+      target: production
+    expose:
+      - "3000"
+
+  db:
+    expose:
+      - "5432"
+    volumes:
+      - db_data_prod:/var/lib/postgresql/data
+
+  nginx:
+    ports:
+      - "8081:8081"
+    depends_on:
+      frontend:
+        condition: service_completed_successfully
+    volumes:
+      - frontend_build:/usr/share/nginx/html:ro
+      - ./nginx/cert:/etc/nginx/cert:ro
+
+volumes:
+  frontend_build:
+  db_data_prod:

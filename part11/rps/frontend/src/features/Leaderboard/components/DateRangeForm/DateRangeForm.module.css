@@ -1,0 +1,48 @@
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: end;
+}
+
+.submitButton {
+  border: 0;
+  border-radius: var(--radius-pill);
+  background-color: #3b3b3b;
+  color: var(--color-text-muted, #888);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.submitButtonActive {
+  border: 0;
+  border-radius: var(--radius-pill);
+  background-color: #3b3b3b;
+  color: var(--color-text);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 10px 14px;
+  cursor: default;
+}
+
+.submitButton:hover {
+  color: var(--color-text);
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--color-text);
+}
+
+.input {
+  border: 1px solid #4a4a4a;
+  border-radius: 10px;
+  background-color: #2d2d2d;
+  color: var(--color-text);
+  padding: 8px 10px;
+}

@@ -1,0 +1,65 @@
+name: 'RPS: Continuous integration'
+
+on:
+  #push:
+  #  branches:
+  #    - main
+  #  paths:
+  #    - 'part11/rps/**'
+  #    - '.github/workflows/rps-ci.yml'
+  #pull_request:
+  #  branches:
+  #    - main
+  #  paths:
+  #    - 'part11/rps/**'
+  #    - '.github/workflows/rps-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: part11/rps
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'yarn'
+          cache-dependency-path: |
+            part11/rps/frontend/yarn.lock
+            part11/rps/backend/yarn.lock
+
+      - name: Set up Docker Compose
+        uses: docker/setup-compose-action@v2
+        with:
+          version: v5.0.0
+
+      - name: Prepare env file
+        run: |
+          cp .env.example .env
+          echo "TEST=true" >> .env
+
+      - name: Install dependencies
+        run: make ci
+
+      - name: Compile frontend and backend
+        run: make compile-ts
+
+      - name: Build docker containers
+        run: make build
+
+      - name: Dump logs on failure
+        if: failure()
+        run: |
+          docker compose logs --tail=200
+          docker compose ps

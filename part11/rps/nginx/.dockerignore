@@ -1,0 +1,20 @@
+# Git
+.git/
+.gitignore
+
+# Documentation
+README.md
+*.md
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Certificates (copy manually as needed)
+# cert/*.pem
+# cert/*.key

@@ -1,0 +1,19 @@
+.pill {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  padding: 4px 8px;
+  font-size: 13px;
+}
+
+.connecting {
+  color: var(--color-status-checking);
+}
+
+.connected {
+  color: var(--color-status-ok);
+}
+
+.disconnected {
+  color: var(--color-status-error);
+}

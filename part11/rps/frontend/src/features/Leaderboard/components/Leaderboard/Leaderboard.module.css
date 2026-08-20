@@ -1,0 +1,92 @@
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: end;
+  justify-content: center;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #555;
+  padding-bottom: 20px;
+}
+
+.liveToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background-color: #3b3b3b;
+  color: var(--color-text-muted, #888);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 8px 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.liveToggle input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-text);
+}
+
+.todayButton {
+  border: 0;
+  border-radius: var(--radius-pill);
+  background-color: #3b3b3b;
+  color: var(--color-text-muted, #888);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.todayButtonActive {
+  border: 0;
+  border-radius: var(--radius-pill);
+  background-color: #3b3b3b;
+  color: var(--color-text);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 10px 14px;
+  cursor: default;
+}
+
+.todayButton:hover {
+  color: var(--color-text);
+}
+
+.error {
+  margin-bottom: 12px;
+  color: #f87171;
+  font-size: 0.9rem;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: var(--radius-card);
+  background-color: var(--color-bg-elevated);
+  box-shadow: var(--shadow-card);
+}
+
+.name {
+  font-weight: 600;
+}
+
+.wins {
+  font-variant-numeric: tabular-nums;
+  color: var(--color-status-ok);
+}
