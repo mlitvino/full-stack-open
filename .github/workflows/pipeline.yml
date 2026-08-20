@@ -7,6 +7,7 @@ on:
   pull_request:
     branches: [main]
     types: [opened, synchronize]
+  #workflow_dispatch:
 
 jobs:
   simple_deployment_pipeline:
@@ -31,9 +32,17 @@ jobs:
       run: npx playwright install --with-deps chromium
     - name: e2e test
       run: npm run test:e2e
+    - name: Build failure notification
+      if: ${{ failure() }}
+      uses: sarisia/actions-status-discord@v1
+      with:
+        webhook: ${{ secrets.DISCORD_WEBHOOK }}
+        severity: error
+        description: Build failed
+        details: 'commit ${{ github.sha }} by ${{ github.actor }} broke the build! Fix it!'
   tag_release:
     needs: [simple_deployment_pipeline]
-    if: github.event_name == 'push'
+    if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -42,7 +51,16 @@ jobs:
       with:
         fetch-depth: 0
     - name: Bump version and push tag
-      uses: anothrNick/github-tag-action@1.75.0
+      id: tag_version
+      uses: anothrNick/github-tag-action@4ed44965e0db8dab2b466a16da04aec3cc312fd8
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         DEFAULT_BUMP: patch
+    - name: Deployment success notification
+      if: ${{ success() }}
+      uses: sarisia/actions-status-discord@v1
+      with:
+        webhook: ${{ secrets.DISCORD_WEBHOOK }}
+        severity: info
+        description: A new tag has been deployed
+        details: 'version ${{ steps.tag_version.outputs.new_tag }}'
