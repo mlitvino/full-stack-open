@@ -8,7 +8,13 @@ on:
 jobs:
   hello_world_job:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: part11
     steps:
-      - name: Say hello
+      - name: Date
         run: |
-          echo "Hello World!"
+          date
+      - name: List files
+        run: |
+          ls -l
