@@ -12,6 +12,7 @@ jobs:
       run:
         working-directory: part11
     steps:
+      - uses: actions/checkout@v6
       - name: Date
         run: |
           date
