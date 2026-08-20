@@ -1,9 +1,10 @@
 name: Testing stuff
 
 on:
-  push:
-    branches:
-      - main
+  #push:
+  #  branches:
+  #    - main
+  workflow_dispatch:
 
 jobs:
   a_test_job:

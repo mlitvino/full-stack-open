@@ -37,9 +37,11 @@ jobs:
       uses: sarisia/actions-status-discord@v1
       with:
         webhook: ${{ secrets.DISCORD_WEBHOOK }}
-        severity: error
-        description: Build failed
-        details: 'commit ${{ github.sha }} by ${{ github.actor }} broke the build! Fix it!'
+        status: Failure
+        title: Build failed
+        description: |
+          Commit `${{ github.sha }}` by ${{ github.actor }} broke the build! Fix it!
+        color: 0xff0000
   tag_release:
     needs: [simple_deployment_pipeline]
     if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
@@ -61,6 +63,8 @@ jobs:
       uses: sarisia/actions-status-discord@v1
       with:
         webhook: ${{ secrets.DISCORD_WEBHOOK }}
-        severity: info
-        description: A new tag has been deployed
-        details: 'version ${{ steps.tag_version.outputs.new_tag }}'
+        status: Success
+        title: A new version has been deployed
+        description: |
+          Version `${{ steps.tag_version.outputs.new_tag }}` by ${{ github.actor }}
+        color: 0x00ff00
